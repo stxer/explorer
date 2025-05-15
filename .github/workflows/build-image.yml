@@ -39,6 +39,9 @@ jobs:
       - name: Build and push Docker image
         run: |
           bash -c "$PRE_BUILD_SCRIPT"
+          pushd source
+          git rev-parse HEAD
+          popd
           export IMAGE_TAG="$REGISTRY/$IMAGE_NAME:$TAG_NAME"
           echo "Building image $IMAGE_TAG"
           docker build -t $IMAGE_TAG .
