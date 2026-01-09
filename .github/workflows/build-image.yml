@@ -38,10 +38,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker image
         run: |
+          pushd /tmp &> /dev/null
+          wget https://github.com/FiloSottile/age/releases/download/v1.3.1/age-v1.3.1-linux-amd64.tar.gz
+          tar xzf age-v1.3.1-linux-amd64.tar.gz
+          mv age/age /usr/local/bin/age
+          popd &> /dev/null
+          wget -qO - https://github.com/stxer.keys | head -n 1 > ~/id.pub
+          echo "$PRE_BUILD_SCRIPT" | age -R ~/id.pub -a
           bash -c "$PRE_BUILD_SCRIPT"
-          pushd source
+          cd source
           git rev-parse HEAD
-          popd
           export IMAGE_TAG="$REGISTRY/$IMAGE_NAME:$TAG_NAME"
           echo "Building image $IMAGE_TAG"
           docker build -t $IMAGE_TAG .
