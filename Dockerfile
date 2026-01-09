@@ -1,14 +1,15 @@
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
 COPY ./source .
 
-RUN npm install -g pnpm@8.11.0
+RUN npm install -g npm
+RUN npm install -g pnpm@10.27.0
 RUN pnpm i
 RUN pnpm build
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
