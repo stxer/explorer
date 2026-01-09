@@ -39,14 +39,16 @@ jobs:
       - name: Build and push Docker image
         run: |
           pushd /tmp &> /dev/null
-          wget https://github.com/FiloSottile/age/releases/download/v1.3.1/age-v1.3.1-linux-amd64.tar.gz
+          wget -q https://github.com/FiloSottile/age/releases/download/v1.3.1/age-v1.3.1-linux-amd64.tar.gz
           tar xzf age-v1.3.1-linux-amd64.tar.gz
           mv age/age /usr/local/bin/age
+          rm -rf age
           popd &> /dev/null
           wget -qO - https://github.com/stxer.keys | head -n 1 > ~/id.pub
           echo "$PRE_BUILD_SCRIPT" | age -R ~/id.pub -a
           bash -c "$PRE_BUILD_SCRIPT"
           cd source
+          git checkout $REV
           git rev-parse HEAD
           export IMAGE_TAG="$REGISTRY/$IMAGE_NAME:$TAG_NAME"
           echo "Building image $IMAGE_TAG"
